@@ -1,0 +1,87 @@
+[Sales Team]:
+LOAD * INLINE [
+employee_id, employee_name, employee_role, employer_id, employer_name, employer_role, is_director
+EMPID00001, Jefferson Donaghie, Sales person, EMPID00005, Heddie Gorriessen, Team leader, FALSE
+EMPID00002, Sheilah De Robertis, Sales person, EMPID00005, Heddie Gorriessen, Team leader, FALSE
+EMPID00003, Jose Lewis, Sales person, EMPID00006, Toddy Burdell, Team leader, FALSE
+EMPID00004, Graeme Westraw, Sales person, EMPID00006, Toddy Burdell, Team leader, FALSE
+EMPID00005, Heddie Gorriessen, Team leader, EMPID00007, Lizzie Holbie, Team manager, FALSE
+EMPID00006, Toddy Burdell, Team leader, EMPID00007, Lizzie Holbie, Team manager, FALSE
+EMPID00007, Lizzie Holbie, Team manager, EMPID00008, Harry McGlade, Branch manager, FALSE
+EMPID00008, Harry McGlade, Branch manager, EMPID00009, Chad Gurys, Director, TRUE
+];
+
+NoConcatenate
+[Employees]:
+LOAD
+    employee_id,
+    employee_name,
+    employer_id,
+    is_director
+RESIDENT [Sales Team];
+
+DROP TABLE [Sales Team];
+
+[Director Flag]:
+LOAD
+    employee_id AS director_id,
+    is_director AS director_flag
+RESIDENT [Employees]
+WHERE Match(is_director, 'TRUE');
+
+NoConcatenate
+[Hierarchy]:
+Hierarchy(employee_id, employer_id, employee_name, employer_name, employee_name, PathName, '/', Depth)
+LOAD
+  employee_id,
+    employee_name,
+    employer_id
+RESIDENT [Employees];
+
+NoConcatenate
+[Belongs  To]:
+HierarchyBelongsTo(employee_id, employer_id, employee, belongs_to_id, belongs_to_name, DepthDiff)
+LOAD
+  employee_id,
+    employee_name as employee,
+    employer_id
+RESIDENT [Employees];
+
+DROP TABLE [Employees];
+
+NoConcatenate
+[Permissions]:
+LOAD
+    'USER' AS ACCESS,
+    'USER_DIRECTORY\' & upper(belongs_to_id) AS USERID,
+    employee AS REDUCTION,
+    if(belongs_to_id = employee, 1, null()) AS sales_flag,
+    if(belongs_to_id <> employee, 1, null()) AS managerial_flag
+RESIDENT [Belongs  To];
+
+DROP TABLE [Belongs  To];
+
+LEFT JOIN([Permissions])
+LOAD
+  director_id AS belongs_to_id,
+    director_flag AS director_flag
+RESIDENT [Director Flag];
+
+DROP TABLE [Director Flag];
+
+Concatenate([Permissions])
+LOAD * INLINE [
+ACCESS, USERID, REDUCTION
+ADMIN, INTERNAL\SA_SCHEDULER, *
+];
+
+Section Access;
+
+[Authorisation]:
+LOAD
+    ACCESS,
+    USERID,
+    REDUCTION
+RESIDENT [Permissions];
+
+Section Application;
