@@ -1,9 +1,16 @@
 Scenario:
 
-DataVizWiz Motors Ltd is a motor company and has a sales team. The director wants to create a dashboard to see which sales people are making the most commission and ultimately which team.
+DataVizWiz Motors Ltd is a motor company and has a sales team.
+The director wants to create a dashboard to see which sales people are making the most commission and ultimately which team.
 
-All sales people report to a team leader and the team leaders reports to a team manager. The team manager reports to the branch manager and the branch manager then reports to the director.
+All sales people report to a team leader and the team leaders reports to a team manager.
+The team manager reports to the branch manager and the branch manager then reports to the director.
 
 Problem:
 
-Here we have a typical hierarchy situation. The data is going to be sensitive which means sales people cannot see each others earnings. A team leader will be authorised to see thier teams data but not another teams. This follows, the manager can see their respective teams and so on. The director and branch manager are the only memebers of DataVizWiz Motors that should have unrestricted access. So how do we solve this problem using section access?
+Here we have a typical hierarchy situation.
+The data is going to be sensitive which means sales people cannot see each others earnings.
+A team leader will be authorised to see thier teams data but not another teams.
+This follows, the manager can see their respective teams and so on.
+The director and branch manager are the only memebers of DataVizWiz Motors that should have unrestricted access.
+So how do we solve this problem using section access?
