@@ -25,4 +25,4 @@ At a first glance the Data Analyst could simply pull the data into a straight ta
 
 However, this causes issues. The formula will be dynamic to what is in the table i.e. if any selections are made on the date, it would no longer show a cumulative figure across a range of dates.
 
-This suggest we need to move this into the data load editor. See cumulative_revenue.qvs for details.
+This suggest we need to move this into the data load editor as laid out in cumulative_revenue.qvs. With this code we now have a fixed cumulative value for each month.
