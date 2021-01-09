@@ -1,0 +1,12 @@
+Scenario:
+
+DataVizWiz Motors Ltd has dealerships in five UK locations, including their head office in London.
+
+Every Month each branch has to submit a final summary revenue figure in the system. The head office in London is the only office that has access to this data.
+
+Problem:
+
+The Head of Sales in the London branch wants to see a summary table containing a year to date figure for each branch so he can quickly see which branches are
+going to reach their end of year target and he wants to view this data in a straight table along with a KPI for each branch.
+
+The Head of Sales has requested that the Data Architect provide this data on their Qlik dashboard. How will the Data Architect go about this?
