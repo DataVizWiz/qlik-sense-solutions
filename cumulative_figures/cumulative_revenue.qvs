@@ -1,0 +1,80 @@
+Revenue:
+LOAD
+    area & Date(record_date, 'YYYYMMDD') AS %CumulativeRevenue,
+    area AS Area,
+    record_date AS [Record Date],
+    sales_month AS [Sales Month],
+    Num#(revenue) AS Revenue
+FROM [lib://AttachedFiles/monthly_revenue.xlsx]
+(ooxml, embedded labels, table is Sheet1);
+
+NOCONCATENATE
+Cumulative:
+LOAD
+    Area AS cArea,
+    [Record Date] AS cRecordDate,
+    Revenue AS cRevenue,
+    Date([Record Date], 'YYYYMMDD') AS cSort
+RESIDENT
+    Revenue;
+
+NOCONCATENATE
+Cumulative2:
+LOAD
+    cArea,
+    cRevenue,
+    cSort
+RESIDENT
+    Cumulative
+ORDER BY
+    cArea, cSort;
+
+DROP TABLE Cumulative;
+
+NOCONCATENATE
+Cumulative3:
+LOAD
+    cArea,
+    SUM(cRevenue) AS cRevenue,
+    cSort
+RESIDENT
+    Cumulative2
+GROUP BY
+    cArea, cSort;
+
+DROP TABLE Cumulative2;
+
+NOCONCATENATE
+Cumulative4:
+LOAD
+    cArea,
+    cRevenue,
+    cSort,
+    If(Peek(cArea) = cArea, 1, 0) AS cAreaFlag
+RESIDENT
+    Cumulative3;
+
+DROP TABLE Cumulative3;
+
+NOCONCATENATE
+Cumulative5:
+LOAD
+    cArea,
+    cRevenue,
+    cSort,
+    cAreaFlag,
+    If(cAreaFlag = 1, RangeSum(Peek('Cumulative Revenue'), cRevenue), cRevenue) AS [Cumulative Revenue]
+RESIDENT
+    Cumulative4;
+
+DROP TABLE Cumulative4;
+
+NOCONCATENATE
+[Cumulative Revenue]:
+LOAD
+    cArea & cSort AS %CumulativeRevenue,
+    If(cAreaFlag = 1, RangeSum(Peek('Cumulative Revenue'), cRevenue), cRevenue) AS [Cumulative Revenue]
+RESIDENT
+    Cumulative5;
+
+DROP TABLE Cumulative5;
