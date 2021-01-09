@@ -1,12 +1,28 @@
 Scenario:
 
 DataVizWiz Motors Ltd has dealerships in five UK locations, including their head office in London.
+On the first day of every month a member of each branch has to submit an overall revenue figure for the previous months sales, e.g. if a figure gets submitted on the first of April, this figure represents the total sales for March.
 
-Every Month each branch has to submit a final summary revenue figure in the system. The head office in London is the only office that has access to this data.
+The head office in London is the only office that has access to this data.
 
 Problem:
 
 The Head of Sales in the London branch wants to see a summary table containing a year to date figure for each branch so he can quickly see which branches are
-going to reach their end of year target and he wants to view this data in a straight table along with a KPI for each branch.
+going to reach their end of year target. He wants to view this data in a straight table along with a KPI for each branch.
 
-The Head of Sales has requested that the Data Architect provide this data on their Qlik dashboard. How will the Data Architect go about this?
+The Head of Sales has requested that the Data Analyst in his team provide this data on their Qlik dashboard. How will the Data Analyst go about this?
+
+Solution:
+
+The fields that get extracted from the raw data file are:
+
+area - the area the branch is located
+record_date - the date the revenue gets submitted
+sales_month - the sales month for which the revenue represents
+revenue - the total monthly revenue
+
+At a first glance the Data Analyst could simply pull the data into a straight table and use a RangeSum(Above(TOTAL SUM(revenue), 0, RowNo(TOTAL))).
+
+However, this causes issues. The formula will be dynamic to what is in the table i.e. if any selections are made on the date, it would no longer show a cumulative figure across a range of dates.
+
+This suggest we need to move this into the data load editor. See cumulative_revenue.qvs for details.
